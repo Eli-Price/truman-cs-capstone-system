@@ -1,11 +1,22 @@
 <script lang='ts'>
+    import { fromJSON } from "postcss";
+    import type { PageData } from './$types'
+  
+  export let data : PageData
+  $:({ presentations }= data)
+  $:({ table_size }= data)
+
+  $: notNull = table_size as number
+
+
   let tableContainer: HTMLDivElement;
   let startY = 0;
   let startHeight = 0;
   let date = new Date();
   let year = date.getFullYear();
   let month = date.getMonth();
-  /*let rows = [];*/
+  let rows = [];
+  let username = "testusernamelol"
 
   function getDaysInMonth(month: number, year: number) {
     return new Date(year, month + 1, 0).getDate();
@@ -42,7 +53,6 @@
   function getDaysArray(month: number, year: number) {
     const daysInMonth = getDaysInMonth(month, year);
     const daysArray = [];
-
     for (let day = 1; day <= daysInMonth; day++) {
       daysArray.push(`${month}/${day}/${year}`);
     }
@@ -84,21 +94,24 @@
       <table class='border-collapse w-full'>
         <thead>
           <tr>
-            {#each days as day, index (index)}
-              <th class='border-solid border-2 border-gray-200 p-2 text-center text-2xl m-10 bg-gray-300'>
-                {day}
-                {#if index < days.length - 1}
-                  <div class="resizer absolute inset-y-0 right-0 w-1 h-full cursor-col-resize" on:mousedown={(event) => startResize(event, index)}></div>
-                {/if}
-              </th>
+            {#each presentations as presentation}
+              <th class='border-solid border-2 border-gray-200 p-2 text-center text-2xl m-10 bg-gray-300'>{presentation.date}</th>
             {/each}
           </tr>
         </thead>
         <tbody>
-          {#each timeSlots as timeSlot}
+          {#each {length: notNull} as count, i}
             <tr>
-              {#each days as day}
-                <td class='border-solid border-2 border-gray-200 p-2 text-center text-xl m-10'>{timeSlot}</td>
+              {#each presentations as presentation}
+                {#if presentation.time_start[i] != undefined}
+                  {#if presentation.slot_taken[i] == 1}
+                    <td class='border-solid border-2 border-gray-200 hover:bg-gray-300 p-2 cursor-pointer text-center text-xl m-10' id={presentation.id[i]}>{presentation.time_start[i]}-{presentation.time_end[i]}</td>
+                  {:else}
+                    <td class='border-solid border-2 border-gray-200 p-2 text-center text-gray-500 text-xl m-10'>{presentation.time_start[i]}-{presentation.time_end[i]}</td>
+                  {/if}
+                {:else}
+                  <td></td>
+                {/if}
               {/each}
             </tr>
           {/each}
