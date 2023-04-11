@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { fromJSON } from "postcss";
-    import type { PageData } from './$types'
+  import { fromJSON } from "postcss";
+  import type { PageData } from './$types'
   
   export let data : PageData
   $:({ presentations }= data)
@@ -18,52 +18,6 @@
   let rows = [];
   let username = "testuserna"
 
-  function getDaysInMonth(month: number, year: number) {
-    return new Date(year, month + 1, 0).getDate();
-  }
-
-  function getTimeSlots() {
-    const timeSlots = [];
-    let startTime = new Date();
-    startTime.setHours(9, 0, 0, 0);
-
-    for (let i = 0; i < 12; i++) {
-      const timeString = startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      timeSlots.push(timeString);
-      startTime.setMinutes(startTime.getMinutes() + 30);
-    }
-
-    return timeSlots;
-  }
-  const timeSlots = getTimeSlots();
-
-  function getDaysArray(month: number, year: number) {
-    const daysInMonth = getDaysInMonth(month, year);
-    const daysArray = [];
-    for (let day = 1; day <= daysInMonth; day++) {
-      daysArray.push(`${month}/${day}/${year}`);
-    }
-
-    return daysArray;
-  }
-  const days = getDaysArray(month, year);
-
-  function startResize(event: any) {
-    startY = event.pageY;
-    startHeight = tableContainer.offsetHeight;
-    document.addEventListener('mousemove', resizeTable);
-    document.addEventListener('mouseup', stopResize);
-  }
-
-  function resizeTable(event: any) {
-    const newHeight = startHeight + (event.pageY - startY);
-    tableContainer.style.height = `${newHeight}px`;
-  }
-
-  function stopResize() {
-    document.removeEventListener('mousemove', resizeTable);
-    document.removeEventListener('mouseup', stopResize);
-  }
 </script>
 
 <main class='flex flex-col'>
@@ -89,15 +43,21 @@
               {#each presentations as presentation}
                 {#if presentation.time_start[i] != undefined}
                   {#if presentation.slot_taken[i] == 1}
-                  <td class='border-solid border-2 border-gray-200 hover:bg-gray-300 p-2 cursor-pointer text-center text-xl m-10'>
+                  <td style='height: 100%' class='border-solid border-2 border-gray-200 hover:bg-gray-300 p-2 cursor-pointer text-center text-xl m-10'>
                     <form action="?/Student_Change_Time" method="POST">
-                      <button>{presentation.time_start[i]}-{presentation.time_end[i]}</button>
+                      <button style="width: 100%; height: 100%">
+                        {presentation.time_start[i]}-{presentation.time_end[i]}<br>
+                        <span class='text-gray-500'>No Student</span>
+                      </button>
                       <input type="hidden" name="presentation_id" value={presentation.id[i]} />
                       <input type="hidden" name="username" value={username} />
                     </form>
                   </td>
                   {:else}
-                    <td class='border-solid border-2 border-gray-200 p-2 text-center text-gray-500 text-xl m-10'>{presentation.time_start[i]}-{presentation.time_end[i]}</td>
+                    <td class='border-solid border-2 border-gray-200 p-2 text-center text-gray-500 text-xl m-10'>
+                      {presentation.time_start[i]}-{presentation.time_end[i]}<br>
+                      <span class='text-gray-500'>{presentation.username[i]}</span>
+                    </td>
                   {/if}
                 {:else}
                   <td></td>
@@ -107,9 +67,6 @@
           {/each}
         </tbody>
       </table>
-    </div>
-    <div class='vertical-resizer' on:mousedown={startResize}>
-      <span style='width: 15px; height: 1px; background-color: #fff;' />
     </div>
   </div>
   <div class='flex ml-4 mb-8 w-full bg-white rounded p-4'>Another cell if need be.</div>

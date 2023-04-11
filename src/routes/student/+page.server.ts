@@ -4,21 +4,27 @@ import { Prisma } from '@prisma/client'
 import { fail } from "@sveltejs/kit";
 
 export const load: ServerLoad = async () => {
-    try {
-        let prez = await prisma.$queryRaw(Prisma.sql`SELECT group_concat(IF(capstone_presentations.username="",1,0) separator ',') slot_taken, group_concat((id) separator ',') as id, DATE_FORMAT(time_start, '%m/%d/%Y') as date, group_concat(DATE_FORMAT(time_start, '%h:%i %p') separator ',') as time_start, group_concat(DATE_FORMAT(time_end, '%h:%i %p') separator ',') as time_end FROM capstone_presentations group by date order by date Desc;`)
+    try 
+    {
+        let prez = await prisma.$queryRaw(Prisma.sql`SELECT group_concat(IF(capstone_presentations.username="",1,0) separator ',') slot_taken, group_concat((id) separator ',') as id, group_concat(capstone_presentations.username separator ',') as username, DATE_FORMAT(time_start, '%m/%d/%Y') as date, group_concat(DATE_FORMAT(time_start, '%h:%i %p') separator ',') as time_start, group_concat(DATE_FORMAT(time_end, '%h:%i %p') separator ',') as time_end FROM capstone_presentations group by date order by date Asc;`)
         let lengths: number[] = []
         for(let count = 0; count < prez.length; count++) {
             prez[count].slot_taken = prez[count].slot_taken.split(',')
             prez[count].id = prez[count].id.split(',')
             prez[count].time_start = prez[count].time_start.split(',')
             prez[count].time_end = prez[count].time_end.split(',')
+            prez[count].username = prez[count].username.split(',')
+            console.log(prez[count].username)
             lengths.push(prez[count].time_start.length)
         }
         return{
+            
+
             presentations: prez,
             table_size: Math.max(...lengths)
         }
-    } catch (error) {
+    } 
+    catch (error) {
         console.error(error)
     }
 }
