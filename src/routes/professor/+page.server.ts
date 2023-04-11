@@ -42,9 +42,9 @@ export const actions: Actions = {
             console.log(username)
             console.log(presentation_id)
             if(await prisma.$queryRaw(Prisma.sql`SELECT username FROM capstone_presentations WHERE username Like ${username}`)){
-                await prisma.$queryRaw(Prisma.sql`Update capstone_presentations set username = "" where username = ${username}`)
+                await prisma.$queryRaw(Prisma.sql`Update capstone_presentations set username = "" where id = ${presentation_id}`)
             }
-            /*await prisma.$queryRaw(Prisma.sql`Update capstone_presentations set username = ${username} where id = ${presentation_id}`)*/
+            
         } catch(err) {
             console.error(err)
             return fail(500, { message: 'Could not remove the presenter'})

@@ -56,7 +56,7 @@
                     <form action="?/Remove_Student" method="POST">
                       <button style="width: 100%; height: 100%">
                         {presentation.time_start[i]}-{presentation.time_end[i]}<br>
-                        <span class='text-gray-500'>{presentation.username[i]}</span>
+                        <span class='text-gray-600'>{presentation.username[i]}</span>
                       </button>
                       <input type="hidden" name="presentation_id" value={presentation.id[i]} />
                       <input type="hidden" name="username" value={username} />
@@ -66,7 +66,7 @@
                     <!-- Display the start and end times if the slot is not taken -->
                     <td class='border-solid border-2 border-gray-200 p-2 text-center text-gray-500 text-xl m-10'>
                       {presentation.time_start[i]}-{presentation.time_end[i]}<br>
-                      <span class='text-gray-500'>No Student</span>
+                      <span class='text-gray-400'>No Student</span>
                     </td>
                   {/if}
                 {:else}
